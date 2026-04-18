@@ -1,0 +1,47 @@
+# ── Credentials — NEVER commit these ─────────────────────────────────────────
+client_secrets.json
+token.json
+.env
+
+# ── Media files (too large / too personal for git) ────────────────────────────
+queue/**
+!queue/.gitkeep
+
+done/**
+!done/.gitkeep
+
+processed/**
+!processed/.gitkeep
+
+BGM/**
+!BGM/.gitkeep
+
+LOGO/**
+!LOGO/.gitkeep
+
+# Keep the example script template, ignore user-created ones
+scripts/**
+!scripts/.gitkeep
+!scripts/EXAMPLE_video_name.txt
+
+# ── Runtime state & logs ──────────────────────────────────────────────────────
+*.log
+upload_log.csv
+last_run.txt
+
+# ── Python bytecode & virtual environments ────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# ── OS artefacts ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
