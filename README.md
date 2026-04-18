@@ -221,7 +221,6 @@ Delete `token.json` and re-run `daily_batch.py`. It will prompt you to log in ag
 The OAuth login determines which channel is used. If you have multiple Google accounts, make sure you log in with the correct one during the browser prompt.
 
 ---
-
 MIT — see [LICENSE](LICENSE)
 
 MIT — free to use, modify, and distribute.
