@@ -222,5 +222,3 @@ The OAuth login determines which channel is used. If you have multiple Google ac
 
 ---
 MIT — see [LICENSE](LICENSE)
-
-MIT — free to use, modify, and distribute.
