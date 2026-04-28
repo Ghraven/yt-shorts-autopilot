@@ -1,28 +1,50 @@
-# yt-shorts-autopilot 🚀
+<h1 align="center">🎬 YT Shorts Autopilot</h1>
 
-Automated YouTube Shorts upload pipeline — edit videos with FFmpeg (watermark + volume boost + BGM), then schedule them directly to YouTube at fixed daily times.
+<p align="center">
+  Automated YouTube Shorts upload pipeline.<br/>
+  FFmpeg post-processing · scheduled publishing · runs on Windows startup · works while your PC is off.
+</p>
 
-Upload **4 Shorts per day**, automatically, even while your PC is off.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python" />
+  <img src="https://img.shields.io/badge/FFmpeg-required-orange?style=flat-square" />
+  <img src="https://img.shields.io/badge/YouTube%20API-v3-red?style=flat-square&logo=youtube" />
+  <img src="https://img.shields.io/badge/Platform-Windows-0078D6?style=flat-square&logo=windows" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" />
+</p>
+
+---
+
+## What it does
+
+Drop your `.mp4` files into the `queue/` folder, run the script once, and it handles everything else:
+
+1. **Processes each video** with FFmpeg — adds your watermark, boosts audio, optionally mixes background music
+2. **Uploads to YouTube** as scheduled private videos set to publish at your chosen times
+3. **Moves processed videos** to `done/` and logs every upload to CSV
+4. **Runs once per day** — safe to add to Windows startup, it skips if it already ran today
+
+YouTube publishes automatically at the scheduled times — **your PC can be off.**
 
 ---
 
 ## Features
 
-- **Scheduled uploads** — 7 AM, 9 AM, 7 PM, 9 PM (Philippine Time / UTC+8)
-- **FFmpeg processing** — logo watermark overlay, volume boost, optional background music
-- **Per-video scripts** — custom title & description from a matching `.txt` file
-- **Auto-logo detection** — just drop any image into `LOGO/`, no config change needed
-- **Slot-safe scheduling** — never double-books the same time slot across daily runs
-- **Once-per-day guard** — safe to run on every PC startup; skips if already ran today
-- **Upload log** — CSV history of every upload with scheduled publish time
-- **First-run setup wizard** — `setup.py` creates all folders and checks dependencies
+- 📅 **Scheduled uploads** — 4 slots per day (7 AM · 9 AM · 7 PM · 9 PM Philippine Time by default)
+- 🎨 **FFmpeg processing** — watermark overlay · volume boost · optional BGM mixing
+- 📝 **Per-video scripts** — custom title & description from a matching `.txt` file
+- 🔄 **Rotating watermark** — cycles through all 4 corners automatically
+- 🔒 **Slot-safe scheduling** — never double-books the same time slot
+- 📊 **Upload log** — full CSV history of every upload with scheduled times
+- 🧙 **Setup wizard** — `setup.py` creates folders, checks dependencies, guides first run
+- ⚡ **Once-per-day guard** — safe to add to Windows startup
 
 ---
 
 ## Requirements
 
 | Tool | Version | Notes |
-|------|---------|-------|
+|---|---|---|
 | Python | 3.10+ | [python.org](https://www.python.org/downloads/) |
 | FFmpeg | Any recent | [ffmpeg.org](https://ffmpeg.org/download.html) — must be in PATH |
 | Google account | — | The YouTube channel you want to upload to |
@@ -31,149 +53,46 @@ Upload **4 Shorts per day**, automatically, even while your PC is off.
 
 ## Quick Start
 
-### 1. Clone the repo
+### Step 1 — Clone and run setup
 
 ```bash
-git clone https://github.com/yourusername/yt-shorts-autopilot.git
+git clone https://github.com/Ghraven/yt-shorts-autopilot
 cd yt-shorts-autopilot
-```
-
-### 2. Run the setup wizard
-
-```bash
 python setup.py
 ```
 
-This will:
-- Install all pip dependencies
-- Create the folder structure (`queue/`, `done/`, `BGM/`, `LOGO/`, `scripts/`)
-- Check for FFmpeg and `client_secrets.json`
-- Print a "what to do next" summary
+The wizard installs pip dependencies, creates all folders, and checks for FFmpeg.
 
-### 3. Set up YouTube OAuth credentials
+### Step 2 — Get YouTube OAuth credentials
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a project → **APIs & Services** → **Library** → Enable **YouTube Data API v3**
+2. Create a project → **APIs & Services** → **Library** → enable **YouTube Data API v3**
 3. **Credentials** → **+ Create Credentials** → **OAuth client ID** → Desktop app
 4. Download the JSON → rename it `client_secrets.json` → place it in the project root
 
-### 4. Add your assets
+### Step 3 — Add your assets
 
 | Folder | What to put here |
-|--------|-----------------|
-| `queue/` | Your `.mp4` Short videos (oldest uploads first) |
+|---|---|
+| `queue/` | Your `.mp4` Short videos (oldest processes first) |
 | `LOGO/` | Your channel logo / watermark (PNG recommended) |
-| `BGM/` | Background music files — `.mp3`, `.wav`, `.m4a` (optional) |
+| `BGM/` | Background music files — `.mp3` / `.wav` / `.m4a` (optional) |
 
-### 5. Generate script templates (optional)
+### Step 4 — (Optional) Generate script templates
 
 ```bash
 python generate_scripts.py
 ```
 
-Creates a `.txt` template in `scripts/` for every video in `queue/`.  
-Open each file and fill in a custom title and description if you want.  
-If you skip this step, the defaults from `config.py` are used.
+Creates a `.txt` template in `scripts/` for every video in `queue/`. Fill in custom titles and descriptions — or skip this and the defaults from `config.py` will be used.
 
-### 6. Upload!
+### Step 5 — Run
 
 ```bash
 python daily_batch.py
 ```
 
-The **first run** will open a browser window asking you to log in with your YouTube account — this is the one-time OAuth flow. After that, `token.json` is saved and future runs are fully automatic.
-
----
-
-## Folder Structure
-
-```
-yt-shorts-autopilot/
-├── queue/                  ← Drop your .mp4 videos here
-├── done/                   ← Videos are moved here after upload
-├── processed/              ← Temporary FFmpeg output (auto-cleaned)
-├── BGM/                    ← Background music (optional)
-├── LOGO/                   ← Your watermark image
-├── scripts/                ← Per-video title + description .txt files
-│   └── EXAMPLE_video_name.txt
-├── config.py               ← All settings (edit this to customise)
-├── daily_batch.py          ← Main upload script
-├── generate_scripts.py     ← Creates script templates for queued videos
-├── setup.py                ← First-run setup wizard
-├── requirements.txt        ← Python dependencies
-├── .env.example            ← Credential reference
-└── .gitignore
-```
-
----
-
-## Per-Video Scripts
-
-Each video in `queue/` can have a matching `.txt` file in `scripts/` with the **exact same filename stem**:
-
-```
-queue/my_motivational_clip.mp4
-scripts/my_motivational_clip.txt   ← linked automatically
-```
-
-**Script file format:**
-
-```
-TITLE: Your Custom Video Title
----
-Your description text here.
-Can be multiple lines.
-Include hashtags, emojis, links — anything you want.
-
-#Shorts #Motivation #YourChannel
-```
-
-- If no script file exists → the defaults from `config.py` are used
-- If the file is blank → same fallback to defaults
-- `generate_scripts.py` pre-creates templates for all queued videos so you can fill them in bulk
-
----
-
-## Configuration
-
-Open `config.py` to customise everything:
-
-```python
-# Upload schedule (PHT / UTC+8)
-UPLOAD_TIMES = [(7, 0), (9, 0), (19, 0), (21, 0)]  # 7AM 9AM 7PM 9PM
-
-# Videos per daily run
-VIDEOS_PER_RUN = 4
-
-# Audio settings
-VOLUME_BOOST = 1.3    # 1.3 = +30% louder
-MUSIC_VOLUME = 0.12   # 12% BGM mix level
-
-# Watermark
-LOGO_WIDTH = 130      # pixels wide (height auto-scales)
-
-# Default metadata
-CHANNEL_HANDLE        = "@YourChannel"
-DEFAULT_TITLE_TEMPLATE = "Daily Motivation #{n}"
-```
-
----
-
-## Auto-Run with Windows Task Scheduler
-
-To run `daily_batch.py` automatically every day on PC startup:
-
-1. Open **Task Scheduler** (`Win + S` → search "Task Scheduler")
-2. Click **Create Basic Task…**
-3. **Name:** `YT Shorts Autopilot`
-4. **Trigger:** When the computer starts
-5. **Action:** Start a program
-   - Program: `C:\Path\To\Python\python.exe`
-   - Arguments: `daily_batch.py`
-   - Start in: `C:\Path\To\yt-shorts-autopilot\`
-6. Finish — the script will now run silently every time Windows boots
-
-The once-per-day guard in the script ensures it only uploads once even if your PC restarts multiple times.
+First run opens a browser for YouTube login (one-time OAuth). After that, fully automatic.
 
 ---
 
@@ -186,39 +105,102 @@ PC boots → daily_batch.py runs
     │
     ├─ Get next 4 videos from queue/
     │
-    ├─ Calculate 4 time slots (7AM/9AM/7PM/9PM PHT)
-    │    └─ Always starts AFTER the last logged slot (no double-booking)
+    ├─ Calculate 4 upload time slots (no double-booking)
     │
     ├─ For each video:
     │    ├─ Read scripts/<name>.txt for custom title/description
-    │    ├─ FFmpeg: add watermark + boost audio + mix BGM
-    │    ├─ Upload to YouTube as private + scheduled
+    │    ├─ FFmpeg: watermark + audio boost + BGM mix
+    │    ├─ Upload to YouTube as scheduled private video
     │    ├─ Log to upload_log.csv
     │    └─ Move original to done/
     │
-    └─ Write today's date to last_run.txt
-         └─ YouTube publishes automatically at the scheduled times
-              (PC can be off)
+    └─ Save today's date → YouTube auto-publishes at scheduled times
+```
+
+---
+
+## Per-Video Scripts
+
+Each video in `queue/` can have a matching `.txt` in `scripts/` with the same filename:
+
+```
+queue/my_clip.mp4
+scripts/my_clip.txt   ← linked automatically
+```
+
+**Format:**
+```
+TITLE: Your Custom Video Title
+---
+Your description here.
+Can be multiple lines.
+Include hashtags, emojis, anything you want.
+
+#Shorts #YourChannel
+```
+
+If no script file exists → defaults from `config.py` are used.
+
+---
+
+## Configuration (`config.py`)
+
+All settings live in `config.py` — run `setup.py` to change them interactively, or edit directly:
+
+```python
+VIDEOS_PER_RUN = 4                          # uploads per day
+UPLOAD_TIMES   = [(7,0),(9,0),(19,0),(21,0)] # 7AM 9AM 7PM 9PM PHT
+VOLUME_BOOST   = 1.3                         # +30% louder
+MUSIC_VOLUME   = 0.12                        # 12% BGM mix
+WATERMARK_MODE = "rotate"                    # rotate / random / fixed corner
+LOGO_WIDTH     = 130                         # watermark width in pixels
+```
+
+---
+
+## Auto-Run on Windows Startup
+
+1. Open **Task Scheduler** → **Create Basic Task**
+2. **Trigger:** When the computer starts
+3. **Action:** Start a program
+   - Program: `C:\Path\To\python.exe`
+   - Arguments: `daily_batch.py`
+   - Start in: `C:\Path\To\yt-shorts-autopilot\`
+4. Done — uploads happen automatically every day
+
+---
+
+## Folder Structure
+
+```
+yt-shorts-autopilot/
+├── queue/              Drop your .mp4 videos here
+├── done/               Videos move here after upload
+├── processed/          Temp FFmpeg output (auto-cleaned)
+├── BGM/                Background music (optional)
+├── LOGO/               Your watermark image
+├── scripts/            Per-video title + description .txt files
+├── config.py           All settings
+├── daily_batch.py      Main script — run this (or add to startup)
+├── generate_scripts.py Creates .txt templates for queued videos
+├── setup.py            First-run wizard
+└── requirements.txt
 ```
 
 ---
 
 ## Troubleshooting
 
-**`FFmpeg not found`**  
-Download from [gyan.dev/ffmpeg/builds](https://www.gyan.dev/ffmpeg/builds/) and add the `bin/` folder to your Windows PATH.
+**`FFmpeg not found`** — Download from [gyan.dev/ffmpeg/builds](https://www.gyan.dev/ffmpeg/builds/) and add the `bin/` folder to Windows PATH.
 
-**`client_secrets.json not found`**  
-Follow the OAuth setup steps above. Make sure the file is in the project root (same folder as `daily_batch.py`).
+**`client_secrets.json not found`** — Complete the OAuth setup above. File must be in the project root.
 
-**`quota exceeded` error**  
-You've hit YouTube's 10,000-unit daily quota. Each upload costs ~1,600 units, so 4 uploads/day = ~6,400 units — well within the limit under normal use. If you see this, wait until midnight Pacific Time for the quota to reset.
+**`quota exceeded`** — YouTube's 10,000-unit daily quota resets at midnight Pacific. Each upload costs ~1,600 units, so 4 uploads = ~6,400 units — well within limits under normal use.
 
-**`token.json` expired / invalid**  
-Delete `token.json` and re-run `daily_batch.py`. It will prompt you to log in again.
-
-**Videos uploading to the wrong channel**  
-The OAuth login determines which channel is used. If you have multiple Google accounts, make sure you log in with the correct one during the browser prompt.
+**`token.json` expired** — Delete `token.json` and re-run. It will prompt a fresh login.
 
 ---
+
+## License
+
 MIT — see [LICENSE](LICENSE)
