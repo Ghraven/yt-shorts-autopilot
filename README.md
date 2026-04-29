@@ -204,3 +204,13 @@ yt-shorts-autopilot/
 ## License
 
 MIT — see [LICENSE](LICENSE)
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
