@@ -64,8 +64,20 @@ def create_template(video: Path, script_file: Path):
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(
+        description="Generate script template .txt files for queued videos."
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true",
+        help="Preview which files would be created without writing anything."
+    )
+    args = parser.parse_args()
+
     print("=" * 60)
     print("  generate_scripts.py — Script Template Generator")
+    if args.dry_run:
+        print("  [DRY RUN] No files will be written.")
     print("=" * 60)
 
     # Ensure scripts/ folder exists
