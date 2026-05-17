@@ -7,7 +7,14 @@ All notable changes to YT Shorts Autopilot are documented here.
 ### Planned
 - Multi-channel support (switch between YouTube accounts)
 - Discord webhook notification on upload
-- Dry-run mode (process + log without uploading)
+
+---
+
+## [1.4.0] — 2026-05-11
+
+### Added
+- `--dry-run` flag on `generate_scripts.py` — previews which templates would be created without writing any files
+- Force re-run hint in `daily_batch.py` output when the once-per-day guard fires
 
 ---
 
