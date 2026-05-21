@@ -9,11 +9,18 @@ All notable changes to YT Shorts Autopilot are documented here.
 
 ---
 
-## [1.4.0] — 2026-05-11
+## [1.5.0] — 2026-05-21
 
 ### Added
 - Discord webhook notification on successful upload (configured via `setup.py`)
 - `--dry-run` flag on `generate_scripts.py` — previews which templates would be created without writing any files
+- Fixed bug where `--dry-run` would still write files in `generate_scripts.py`
+
+---
+
+## [1.4.0] — 2026-05-11
+
+### Added
 - Force re-run hint in `daily_batch.py` output when the once-per-day guard fires
 
 ---
