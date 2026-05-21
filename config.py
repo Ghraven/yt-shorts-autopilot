@@ -93,6 +93,7 @@ LOGO_WIDTH: int     = _s.get("logo_width", 130)
 CATEGORY_ID: str              = _s.get("category_id", "22")
 CHANNEL_HANDLE: str           = _s.get("channel_handle", "@YourChannel")
 DEFAULT_TITLE_TEMPLATE: str   = _s.get("default_title_template", "Daily Motivation #{n}")
+DISCORD_WEBHOOK_URL: str      = _s.get("discord_webhook_url", "")
 
 DEFAULT_DESCRIPTION: str = f"""\
 Welcome to Limitless Minds — your daily source of motivation, wisdom, and inspiration. 💡🔥

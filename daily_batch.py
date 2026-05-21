@@ -30,6 +30,9 @@ import shutil
 import subprocess
 import logging
 import webbrowser
+import urllib.request
+import urllib.error
+import json
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -413,6 +416,43 @@ def move_to_done(src: Path):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# NOTIFICATIONS
+# ─────────────────────────────────────────────────────────────────────────────
+
+def send_discord_notification(video_id: str, title: str, publish_at: datetime):
+    if not config.DISCORD_WEBHOOK_URL:
+        return
+        
+    url = f"https://youtu.be/{video_id}"
+    pub_time = publish_at.strftime('%b %d %Y %I:%M %p PHT')
+    
+    payload = {
+        "content": None,
+        "embeds": [
+            {
+                "title": "🎬 New Short Scheduled!",
+                "description": f"**{title}**\n\nScheduled to publish at:\n`{pub_time}`\n\n[Watch Video]({url})",
+                "color": 16711680,
+                "author": {
+                    "name": "YT Shorts Autopilot"
+                }
+            }
+        ]
+    }
+    
+    req = urllib.request.Request(
+        config.DISCORD_WEBHOOK_URL,
+        data=json.dumps(payload).encode('utf-8'),
+        headers={'User-Agent': 'YTShortsAutopilot/1.0', 'Content-Type': 'application/json'}
+    )
+    
+    try:
+        urllib.request.urlopen(req)
+        log.info("   🔔 Discord notification sent!")
+    except Exception as e:
+        log.warning(f"   ⚠️ Failed to send Discord notification: {e}")
+
+# ─────────────────────────────────────────────────────────────────────────────
 # MAIN
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -464,6 +504,7 @@ def run_daily_batch():
         try:
             vid_id = upload_scheduled(youtube, processed, title, description, publish_at)
             log_upload(src.name, vid_id, title, publish_at)
+            send_discord_notification(vid_id, title, publish_at)
             move_to_done(src)
             success += 1
         except Exception as exc:

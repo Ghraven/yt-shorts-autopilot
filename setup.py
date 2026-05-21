@@ -249,7 +249,7 @@ def ask_time_slot(index: int) -> tuple[int, int]:
 #  SETUP STEPS
 # ─────────────────────────────────────────────────────────────────────────────
 
-TOTAL_STEPS = 10
+TOTAL_STEPS = 11
 
 
 def step_install(step: int):
@@ -448,6 +448,18 @@ def step_channel_info(step: int) -> tuple[str, str]:
     return handle, template
 
 
+def step_discord_webhook(step: int) -> str:
+    section(step, TOTAL_STEPS, "Discord Webhook Notification", "🔔")
+    print(f"  {DIMW}If provided, a message will be sent to this Discord channel when a video uploads.{RESET}")
+    print(f"  {DIMW}Leave blank to disable.{RESET}\n")
+    url = ask_text("Discord Webhook URL", "")
+    if url:
+        ok(f"Discord Webhook: {B_WHITE}Enabled{RESET}")
+    else:
+        info("Discord Webhook: Disabled")
+    return url
+
+
 def step_dependencies():
     print()
     print(f"  {HDR}┌{'─' * 54}┐{RESET}")
@@ -528,6 +540,7 @@ def print_summary(s: dict):
         ("🔍  Logo width",          f"{px} px"),
         ("✏️   Channel handle",     hdl),
         ("📝  Title template",      tmpl),
+        ("🔔  Discord Webhook",     "Enabled" if s.get("discord_webhook_url") else "Disabled"),
     ]
     for label, value in rows:
         print(f"  {DIMW}{label:<28}{RESET}  {B_WHITE}{value}{RESET}")
@@ -598,6 +611,9 @@ def main():
     # 10. Channel info
     handle, title_tmpl = step_channel_info(step);  step += 1
 
+    # 11. Discord webhook
+    discord_url = step_discord_webhook(step);  step += 1
+
     # Dependency check (no step number — informational only)
     step_dependencies()
 
@@ -613,6 +629,7 @@ def main():
         "category_id":                  YT_CATEGORY_ID,   # fixed: People & Blogs
         "channel_handle":               handle,
         "default_title_template":       title_tmpl,
+        "discord_webhook_url":          discord_url,
     }
     save_settings(settings)
     print_summary(settings)

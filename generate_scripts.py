@@ -102,13 +102,19 @@ def main():
             print(f"  ⏭️  Already exists : {script.name}")
             skipped += 1
         else:
-            create_template(video, script)
-            print(f"  ✅ Created         : {script.name}")
+            if not args.dry_run:
+                create_template(video, script)
+                print(f"  ✅ Created         : {script.name}")
+            else:
+                print(f"  ✅ Would create    : {script.name}")
             created += 1
 
     print()
     print("=" * 60)
-    print(f"  ✅ {created} new script(s) created  |  {skipped} already existed")
+    if args.dry_run:
+        print(f"  ✅ {created} new script(s) would be created  |  {skipped} already existed")
+    else:
+        print(f"  ✅ {created} new script(s) created  |  {skipped} already existed")
     print()
     print("  Next: open scripts/ and customise each .txt file.")
     print("  Format:")
