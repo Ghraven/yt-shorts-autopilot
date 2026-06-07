@@ -44,6 +44,8 @@ from googleapiclient.http import MediaFileUpload
 
 import config
 
+DISCORD_WEBHOOK_TIMEOUT = 10
+
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
@@ -447,7 +449,7 @@ def send_discord_notification(video_id: str, title: str, publish_at: datetime):
     )
     
     try:
-        urllib.request.urlopen(req)
+        urllib.request.urlopen(req, timeout=DISCORD_WEBHOOK_TIMEOUT)
         log.info("   🔔 Discord notification sent!")
     except Exception as e:
         log.warning(f"   ⚠️ Failed to send Discord notification: {e}")

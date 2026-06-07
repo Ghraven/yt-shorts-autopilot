@@ -4,6 +4,9 @@ All notable changes to YT Shorts Autopilot are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- Added a timeout to Discord webhook notifications so a slow webhook cannot stall the daily upload run.
+
 ### Planned
 - Multi-channel support (switch between YouTube accounts)
 
