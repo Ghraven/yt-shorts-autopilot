@@ -50,6 +50,25 @@ _ALL_POSITIONS = [
     ("top-right",    "W-w-15:15"),
 ]
 
+DEFAULT_UPLOAD_TIMES = [(7, 0), (9, 0), (19, 0), (21, 0)]
+
+
+def _load_upload_times(value) -> list[tuple[int, int]]:
+    """Return valid (hour, minute) upload slots from settings data."""
+    slots: list[tuple[int, int]] = []
+    if not isinstance(value, list):
+        return DEFAULT_UPLOAD_TIMES
+    for item in value:
+        if not isinstance(item, (list, tuple)) or len(item) != 2:
+            continue
+        try:
+            hour, minute = int(item[0]), int(item[1])
+        except (TypeError, ValueError):
+            continue
+        if 0 <= hour <= 23 and 0 <= minute <= 59:
+            slots.append((hour, minute))
+    return slots or DEFAULT_UPLOAD_TIMES
+
 # ─────────────────────────────────────────────────────────────────────────────
 #  Load settings.json
 # ─────────────────────────────────────────────────────────────────────────────
@@ -70,9 +89,7 @@ if _SETTINGS_FILE.exists():
 # Upload schedule
 VIDEOS_PER_RUN: int = _s.get("uploads_per_day", 4)
 
-UPLOAD_TIMES: list[tuple[int, int]] = [
-    tuple(t) for t in _s.get("upload_times", [[7, 0], [9, 0], [19, 0], [21, 0]])
-]
+UPLOAD_TIMES: list[tuple[int, int]] = _load_upload_times(_s.get("upload_times", DEFAULT_UPLOAD_TIMES))
 
 # Original video audio boost  (setup stores 0–30 as a %; convert to multiplier)
 VOLUME_BOOST: float = 1.0 + (_s.get("video_volume_boost_percent", 30) / 100.0)
